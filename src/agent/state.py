@@ -50,14 +50,34 @@ class EvidencePack(BaseModel):
     evidence: List[EvidenceItem] = Field(default_factory=list)
 
 
+class ImageSpec(BaseModel):
+    placeholder: str = Field(..., description="e.g. [[IMAGE_1]]")
+    filename: str = Field(..., description="Save under images/, e.g. qkv_flow.png")
+    alt: str
+    caption: str
+    # Changed: instead of a text-to-image prompt, the LLM now outputs actual
+    # Mermaid diagram syntax — this gets rendered directly, not "imagined"
+    mermaid_code: str = Field(
+        ...,
+        description="Valid Mermaid diagram syntax (flowchart, sequence, etc.) representing this concept.",
+    )
+
+
+class GlobalImagePlan(BaseModel):
+    md_with_placeholders: str
+    images: List[ImageSpec] = Field(default_factory=list)
+
+
 class State(TypedDict):
     topic: str
-
-    # routing/research state
     mode: str
     needs_research: bool
     queries: List[str]
     evidence: List[EvidenceItem]
     plan: Optional[Plan]
     sections: Annotated[List[tuple], operator.add]
+    merged_md: str
+    md_with_placeholders: str
+    image_specs: List[dict]
+
     final: str
