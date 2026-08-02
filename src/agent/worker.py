@@ -1,37 +1,25 @@
 from langchain_core.messages import SystemMessage, HumanMessage
-from agent.llm import llm
-from agent.prompts import WRITER_SYSTEM_PROMPT, build_writer_user_prompt
+from src.agent.state import Task, Plan, EvidenceItem
+from src.agent.llm import llm
+from src.agent.prompts import WRITER_SYSTEM_PROMPT, build_writer_user_prompt
 
-from langchain_core.messages import SystemMessage, HumanMessage
-from agent.llm import llm
-from agent.prompts import WRITER_SYSTEM_PROMPT, build_writer_user_prompt
 
-def worker(payload: dict) -> dict:
-    task = payload["task"]
+def worker_node(payload: dict) -> dict:
+    # Payload arrives as plain dicts (see fanout) — rebuild typed objects
+    # here so the rest of the function gets type safety/autocomplete
+    task = Task(**payload["task"])
+    plan = Plan(**payload["plan"])
+    evidence = [EvidenceItem(**e) for e in payload.get("evidence", [])]
     topic = payload["topic"]
-    plan = payload["plan"]
+    mode = payload.get("mode", "closed_book")
 
     section_md = llm.invoke(
         [
             SystemMessage(content=WRITER_SYSTEM_PROMPT),
-            HumanMessage(content=build_writer_user_prompt(plan, topic, task)),
+            HumanMessage(content=build_writer_user_prompt(plan, topic, task, mode, evidence)),
         ]
     ).content.strip()
 
-    return {"sections": [section_md]}
-
-
-# # Worker node
-# def worker(payload: dict) -> dict:
-#     task = payload["task"]
-#     topic = payload["topic"]
-#     plan = payload["plan"]
-
-#     section_md = llm.invoke(
-#         [
-#             SystemMessage(content=WRITER_SYSTEM_PROMPT),
-#             HumanMessage(content=build_writer_user_prompt(plan.blog_title, topic, task)),
-#         ]
-#     ).content.strip()
-
-#     return {"sections": [section_md]}
+    # Return (task_id, markdown) instead of just markdown — lets the reducer
+    # restore planned order even though workers finish in arbitrary order
+    return {"sections": [(task.id, section_md)]}
