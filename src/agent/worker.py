@@ -6,7 +6,6 @@ from langchain_core.messages import SystemMessage, HumanMessage
 from agent.llm import llm
 from agent.prompts import WRITER_SYSTEM_PROMPT, build_writer_user_prompt
 
-
 def worker(payload: dict) -> dict:
     task = payload["task"]
     topic = payload["topic"]
