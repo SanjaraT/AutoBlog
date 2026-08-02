@@ -12,5 +12,6 @@ def reducer(state: State) -> dict:
 
     filename = title.lower().replace(" ", "_") + ".md"
     (OUTPUT_DIR / filename).write_text(final_md, encoding="utf-8")
+    
 
     return {"final": final_md}
