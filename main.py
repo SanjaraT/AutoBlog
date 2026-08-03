@@ -11,6 +11,9 @@ if __name__ == "__main__":
             "evidence": [],
             "plan": None,
             "sections": [],
+            "merged_md": "",
+            "md_with_placeholders": "",
+            "image_specs": [],
             "final": "",
         }
     )
