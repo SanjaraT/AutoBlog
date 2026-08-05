@@ -64,38 +64,6 @@ Style:
 - Short paragraphs, bullets where helpful, code fences for code.
 - Avoid fluff/marketing. Be precise and implementation-oriented.
 """
-
-
-def build_writer_user_prompt(plan, topic: str, task, mode: str, evidence: list) -> str:
-    bullets_text = "\n- " + "\n- ".join(task.bullets)
-
-    # Evidence is formatted as a flat list of "title | url | date" lines so the
-    # LLM can cite specific URLs without needing to parse nested JSON
-    evidence_text = ""
-    if evidence:
-        evidence_text = "\n".join(
-            f"- {e.title} | {e.url} | {e.published_at or 'date:unknown'}".strip()
-            for e in evidence[:20]
-        )
-
-    return (
-        f"Blog title: {plan.blog_title}\n"
-        f"Audience: {plan.audience}\n"
-        f"Tone: {plan.tone}\n"
-        f"Blog kind: {plan.blog_kind}\n"
-        f"Constraints: {plan.constraints}\n"
-        f"Topic: {topic}\n"
-        f"Mode: {mode}\n\n"
-        f"Section title: {task.title}\n"
-        f"Goal: {task.goal}\n"
-        f"Target words: {task.target_words}\n"
-        f"Tags: {task.tags}\n"
-        f"requires_research: {task.requires_research}\n"
-        f"requires_citations: {task.requires_citations}\n"
-        f"requires_code: {task.requires_code}\n"
-        f"Bullets:{bullets_text}\n\n"
-        f"Evidence (ONLY use these URLs when citing):\n{evidence_text}\n"
-    )
 ROUTER_SYSTEM_PROMPT = """You are a routing module for a technical blog planner.
 
 Decide whether web research is needed BEFORE planning.
@@ -158,3 +126,57 @@ Prefer diagrams over prose ONLY when a process/architecture/flow is genuinely
 easier to understand visually than in text. Avoid decorative or trivial diagrams.
 Return strictly GlobalImagePlan.
 """
+
+CRITIC_SYSTEM_PROMPT = """You are a technical editor reviewing blog sections
+against their required bullet points.
+
+For EACH section provided, check ONLY:
+- Does the section substantively address every bullet listed? (not just
+  mention the topic in passing — the bullet's specific point must actually
+  be covered in the content)
+
+Do NOT judge word count or check for code blocks — those are checked
+separately in code and are not your concern here.
+
+If a section fails, list which specific bullet(s) were not addressed and why.
+Return strictly CritiquePack with one SectionCritique per section provided.
+"""
+
+def build_writer_user_prompt(plan, topic: str, task, mode: str, evidence: list, feedback: list[str] | None = None) -> str:
+    bullets_text = "\n- " + "\n- ".join(task.bullets)
+
+    evidence_text = ""
+    if evidence:
+        evidence_text = "\n".join(
+            f"- {e.title} | {e.url} | {e.published_at or 'date:unknown'}".strip()
+            for e in evidence[:20]
+        )
+
+    feedback_block = ""
+    if feedback:
+        feedback_text = "\n- " + "\n- ".join(feedback)
+        feedback_block = (
+            "\nREVISION REQUIRED — a previous draft of this section failed review.\n"
+            f"Fix these specific issues:{feedback_text}\n"
+        )
+
+    return (
+        f"Blog title: {plan.blog_title}\n"
+        f"Audience: {plan.audience}\n"
+        f"Tone: {plan.tone}\n"
+        f"Blog kind: {plan.blog_kind}\n"
+        f"Constraints: {plan.constraints}\n"
+        f"Topic: {topic}\n"
+        f"Mode: {mode}\n\n"
+        f"Section title: {task.title}\n"
+        f"Goal: {task.goal}\n"
+        f"Target words: {task.target_words}\n"
+        f"Tags: {task.tags}\n"
+        f"requires_research: {task.requires_research}\n"
+        f"requires_citations: {task.requires_citations}\n"
+        f"requires_code: {task.requires_code}\n"
+        f"Bullets:{bullets_text}\n\n"
+        f"Evidence (ONLY use these URLs when citing):\n{evidence_text}\n"
+        f"{feedback_block}"
+    )
+    
