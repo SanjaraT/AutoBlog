@@ -1,6 +1,14 @@
+import re
+import base64
 from typing import List
+
+import requests
 from langchain_community.tools.tavily_search import TavilySearchResults
 
+
+# =============================================================================
+# Web search (Tavily)
+# =============================================================================
 
 def tavily_search(query: str, max_results: int = 5, snippet_char_limit: int = 400) -> List[dict]:
     """
@@ -24,9 +32,34 @@ def tavily_search(query: str, max_results: int = 5, snippet_char_limit: int = 40
         )
     return normalized
 
-import base64
-import requests
 
+# =============================================================================
+# Citation verification 
+# =============================================================================
+
+def extract_cited_urls(markdown: str) -> List[str]:
+    """
+    Pull every [Source](URL) style link out of generated markdown.
+    Used to check the model didn't cite a URL it never actually retrieved.
+    """
+    return re.findall(r"\[Source\]\((https?://[^\)\s]+)\)", markdown)
+
+
+def find_unverified_citations(sections_md: List[str], evidence_urls: set) -> List[str]:
+    """
+    Compare every cited URL across all sections against the known evidence URLs.
+    Anything cited that isn't in evidence is a likely hallucinated source.
+    """
+    all_cited: List[str] = []
+    for md in sections_md:
+        all_cited.extend(extract_cited_urls(md))
+
+    return sorted(set(all_cited) - evidence_urls)
+
+
+# =============================================================================
+# Diagram rendering (Mermaid) 
+# =============================================================================
 
 def render_mermaid_to_png(mermaid_code: str) -> bytes:
     """
@@ -40,9 +73,6 @@ def render_mermaid_to_png(mermaid_code: str) -> bytes:
 
     response = requests.get(url, timeout=30)
     response.raise_for_status()
-
-    # mermaid.ink returns a 200 with an error image if the syntax is invalid,
-    # so also check the response actually looks like a PNG
     if not response.content.startswith(b"\x89PNG"):
         raise RuntimeError("mermaid.ink did not return a valid PNG — check Mermaid syntax.")
 
