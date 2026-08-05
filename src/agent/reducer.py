@@ -1,7 +1,7 @@
 from pathlib import Path
 from langgraph.graph import StateGraph, START, END
 from src.agent.state import State, GlobalImagePlan
-from src.agent.llm import llm
+from src.agent.llm import llm, with_groq_retry
 from src.agent.prompts import DECIDE_IMAGES_SYSTEM_PROMPT
 from src.agent.tools import render_mermaid_to_png
 from langchain_core.messages import SystemMessage, HumanMessage
@@ -12,9 +12,19 @@ OUTPUT_DIR.mkdir(exist_ok=True)
 
 
 def merge_content(state: State) -> dict:
-    """Step 1: join all worker sections in planned order into one markdown doc."""
+    """Step 1: join all worker sections in planned order into one markdown doc.
+
+    Sections may contain multiple entries per task_id if the critic loop
+    triggered a revision (operator.add appends, doesn't replace) — keep only
+    the LAST (most recent/revised) entry for each task_id.
+    """
     plan = state["plan"]
-    ordered_sections = [md for _, md in sorted(state["sections"], key=lambda x: x[0])]
+
+    latest_by_id: dict[int, str] = {}
+    for task_id, md in state["sections"]:
+        latest_by_id[task_id] = md
+
+    ordered_sections = [latest_by_id[task_id] for task_id in sorted(latest_by_id.keys())]
     body = "\n\n".join(ordered_sections).strip()
     merged_md = f"# {plan.blog_title}\n\n{body}\n"
     return {"merged_md": merged_md}
@@ -22,7 +32,7 @@ def merge_content(state: State) -> dict:
 
 def decide_images(state: State) -> dict:
     """Step 2: ask the LLM whether images help, and where to place them."""
-    planner = llm.with_structured_output(GlobalImagePlan)
+    planner = with_groq_retry(llm.with_structured_output(GlobalImagePlan))
     merged_md = state["merged_md"]
     plan = state["plan"]
     assert plan is not None
