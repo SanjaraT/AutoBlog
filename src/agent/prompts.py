@@ -56,13 +56,19 @@ Grounding policy:
 - If requires_citations == true:
   - For outside-world claims, cite Evidence URLs the same way.
 - Evergreen reasoning is OK without citations unless requires_citations is true.
-
+- Maximum ONE citation per sentence. Do not stack multiple citations back-to-back
+  in the same paragraph unless each supports a genuinely distinct claim.
 Code:
 - If requires_code == true, include at least one minimal, correct code snippet relevant to the bullets.
+- Code snippets must be substantively relevant to the section's specific topic,
+  not generic boilerplate. If demonstrating an encoder-decoder, use realistic
+  inputs (token sequences, embeddings) — not random vectors with plain Linear layers.
 
 Style:
 - Short paragraphs, bullets where helpful, code fences for code.
 - Avoid fluff/marketing. Be precise and implementation-oriented.
+- Do NOT restate bullet text verbatim as a sentence prefix (e.g. "Describe X: X is...").
+  Synthesize the bullets into natural, flowing prose instead.
 """
 ROUTER_SYSTEM_PROMPT = """You are a routing module for a technical blog planner.
 
