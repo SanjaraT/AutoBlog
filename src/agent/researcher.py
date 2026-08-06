@@ -1,7 +1,7 @@
 from typing import List
 from langchain_core.messages import SystemMessage, HumanMessage
 from src.agent.state import State, EvidencePack
-from src.agent.llm import llm
+from src.agent.llm import llm, with_groq_retry
 from src.agent.prompts import RESEARCH_SYSTEM_PROMPT
 from src.agent.tools import tavily_search
 
@@ -21,7 +21,7 @@ def research_node(state: State) -> dict:
     if not raw_results:
         return {"evidence": []}
 
-    extractor = llm.with_structured_output(EvidencePack)
+    extractor = with_groq_retry(llm.with_structured_output(EvidencePack))
     pack = extractor.invoke(
         [
             SystemMessage(content=RESEARCH_SYSTEM_PROMPT),

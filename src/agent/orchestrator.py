@@ -1,12 +1,12 @@
 from langchain_core.messages import SystemMessage, HumanMessage
 from langgraph.types import Send
 from src.agent.state import State, Plan
-from src.agent.llm import llm
+from src.agent.llm import llm, with_groq_retry
 from src.agent.prompts import PLANNER_SYSTEM_PROMPT
 
 
 def orchestrator_node(state: State) -> dict:
-    planner = llm.with_structured_output(Plan)
+    planner = with_groq_retry(llm.with_structured_output(Plan))
     evidence = state.get("evidence", [])
     mode = state.get("mode", "closed_book")
 
