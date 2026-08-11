@@ -99,3 +99,4 @@ class State(TypedDict):
     image_specs: List[dict]
 
     final: str
+    run_id: Optional[int] 
