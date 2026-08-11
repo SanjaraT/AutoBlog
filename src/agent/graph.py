@@ -6,6 +6,7 @@ from src.agent.orchestrator import orchestrator_node, fanout
 from src.agent.worker import worker_node
 from src.agent.critic import critic_node, decide_after_critic, revise_fanout
 from src.agent.reducer import reducer_subgraph
+from src.agent.persistence import persist_run
 
 def after_worker(state: State) -> str:
     """
@@ -23,6 +24,7 @@ def build_graph():
     g.add_node("worker", worker_node)
     g.add_node("critic", critic_node)
     g.add_node("reducer", reducer_subgraph)
+    g.add_node("persist", persist_run)
 
     g.add_edge(START, "router")
     g.add_conditional_edges("router", route_next, {"research": "research", "orchestrator": "orchestrator"})
@@ -33,7 +35,8 @@ def build_graph():
 
     g.add_conditional_edges("critic", decide_after_critic, ["worker", "reducer"])
 
-    g.add_edge("reducer", END)
+    g.add_edge("reducer", "persist")
+    g.add_edge("persist", END)
 
     return g.compile()
 
