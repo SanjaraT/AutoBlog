@@ -1,6 +1,9 @@
 from src.agent.graph import app
+from src.agent.db import init_schema
 
 if __name__ == "__main__":
+    init_schema()  # safe to call every run — creates tables only if missing
+
     topic = input("Enter blog topic: ")
     result = app.invoke(
         {
@@ -18,11 +21,13 @@ if __name__ == "__main__":
             "md_with_placeholders": "",
             "image_specs": [],
             "final": "",
+            "run_id": None,
         },
         config={"max_concurrency": 2},
     )
 
     print(f"\nBlog saved. Title: {result['plan'].blog_title}")
+    print(f"Run ID: {result.get('run_id')}")
 
     print("\n=== CRITIC REPORT ===")
     print(f"Revision passes used: {result.get('revision_count', 0)}")
