@@ -95,3 +95,44 @@ def init_schema():
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(SCHEMA_SQL)
+
+
+def fetch_recent_runs(limit: int = 20) -> list[dict]:
+    """Return summary info for the most recent runs, newest first."""
+    with get_connection() as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(
+                """
+                SELECT id, topic, blog_title, blog_kind, revision_count,
+                       unverified_citation_count, created_at
+                FROM runs
+                ORDER BY id DESC
+                LIMIT %s
+                """,
+                (limit,),
+            )
+            return cur.fetchall()
+
+
+def fetch_run_detail(run_id: int) -> dict | None:
+    """Return full detail for one run: metadata + final markdown + sections + critiques."""
+    with get_connection() as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("SELECT * FROM runs WHERE id = %s", (run_id,))
+            run = cur.fetchone()
+            if not run:
+                return None
+
+            cur.execute("SELECT * FROM sections WHERE run_id = %s ORDER BY task_id", (run_id,))
+            run["sections"] = cur.fetchall()
+
+            cur.execute("SELECT * FROM critiques WHERE run_id = %s ORDER BY task_id", (run_id,))
+            run["critiques"] = cur.fetchall()
+
+            cur.execute("SELECT * FROM evidence WHERE run_id = %s", (run_id,))
+            run["evidence"] = cur.fetchall()
+
+            cur.execute("SELECT * FROM images WHERE run_id = %s", (run_id,))
+            run["images"] = cur.fetchall()
+
+            return run
