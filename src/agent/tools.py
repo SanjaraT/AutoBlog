@@ -61,6 +61,18 @@ def find_unverified_citations(sections_md: List[str], evidence_urls: set) -> Lis
 # Diagram rendering (Mermaid) 
 # =============================================================================
 
+def sanitize_mermaid_code(mermaid_code: str) -> str:
+    """
+    Auto-correct the most common LLM-generated Mermaid syntax mistakes before
+    rendering. This is a safety net on top of prompt-level instructions --
+    prompting alone doesn't guarantee valid syntax every time.
+    """
+    # Fix "-->|Label|>" (invalid trailing '>' after a labeled arrow's closing pipe)
+    # -> "-->|Label|"
+    fixed = re.sub(r"(-->\|[^|]*\|)>", r"\1", mermaid_code)
+    return fixed
+
+
 def render_mermaid_to_png(mermaid_code: str) -> bytes:
     """
     Render Mermaid diagram syntax to a PNG using the free mermaid.ink API.
@@ -68,6 +80,7 @@ def render_mermaid_to_png(mermaid_code: str) -> bytes:
     asking a generative model to "draw" a diagram from a text description,
     which avoids the illegible/garbled text problem entirely.
     """
+    mermaid_code = sanitize_mermaid_code(mermaid_code)
     encoded = base64.urlsafe_b64encode(mermaid_code.encode("utf-8")).decode("ascii")
     url = f"https://mermaid.ink/img/{encoded}?type=png&bgColor=white"
 

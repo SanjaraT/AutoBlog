@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 from langgraph.graph import StateGraph, START, END
 from src.agent.state import State, GlobalImagePlan
@@ -30,12 +31,49 @@ def merge_content(state: State) -> dict:
     return {"merged_md": merged_md}
 
 
+def _extract_headings(md: str) -> list[str]:
+    """Pull every '## Heading' line out of the merged markdown, in order."""
+    return re.findall(r"^##\s+(.+)$", md, flags=re.MULTILINE)
+
+
+def _insert_placeholders(md: str, images: list[dict]) -> str:
+    """
+    Deterministically splice an [[IMAGE_N]] placeholder right after the
+    matching '## Heading' line for each image spec. This never touches or
+    reproduces the rest of the document, so content can't be lost or
+    paraphrased the way it could when an LLM was asked to rewrite the whole
+    doc itself.
+    """
+    for idx, spec in enumerate(images, start=1):
+        placeholder = f"[[IMAGE_{idx}]]"
+        spec["placeholder"] = placeholder
+
+        heading_line = f"## {spec['after_heading']}"
+        if heading_line in md:
+            md = md.replace(heading_line, f"{heading_line}\n\n{placeholder}", 1)
+        else:
+            # LLM didn't return an exact heading match -- fall back to
+            # appending at the end rather than silently dropping the diagram
+            md = md.rstrip() + f"\n\n{placeholder}\n"
+
+    return md
+
+
 def decide_images(state: State) -> dict:
-    """Step 2: ask the LLM whether images help, and where to place them."""
+    """Step 2: ask the LLM WHERE diagrams help and WHAT they should contain.
+
+    The LLM only returns structured ImageSpec objects (heading + mermaid code
+    + captions) -- it is never asked to reproduce the blog text itself.
+    Placeholder insertion happens afterward in plain Python via
+    _insert_placeholders, which is 100% reliable and can't lose content.
+    """
     planner = with_groq_retry(llm.with_structured_output(GlobalImagePlan))
     merged_md = state["merged_md"]
     plan = state["plan"]
     assert plan is not None
+
+    headings = _extract_headings(merged_md)
+    headings_text = "\n".join(f"- {h}" for h in headings)
 
     image_plan = planner.invoke(
         [
@@ -44,16 +82,21 @@ def decide_images(state: State) -> dict:
                 content=(
                     f"Blog kind: {plan.blog_kind}\n"
                     f"Topic: {state['topic']}\n\n"
-                    "Insert placeholders + propose image prompts.\n\n"
+                    f"Available section headings (after_heading must match one of these EXACTLY):\n"
+                    f"{headings_text}\n\n"
+                    "Full blog content, for context only -- do NOT reproduce or rewrite it:\n\n"
                     f"{merged_md}"
                 )
             ),
         ]
     )
 
+    images = [img.model_dump() for img in image_plan.images]
+    md_with_placeholders = _insert_placeholders(merged_md, images)
+
     return {
-        "md_with_placeholders": image_plan.md_with_placeholders,
-        "image_specs": [img.model_dump() for img in image_plan.images],
+        "md_with_placeholders": md_with_placeholders,
+        "image_specs": images,
     }
 
 

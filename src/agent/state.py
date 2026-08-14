@@ -64,7 +64,10 @@ class CritiquePack(BaseModel):
 
 # structured output schema for image generation
 class ImageSpec(BaseModel):
-    placeholder: str = Field(..., description="e.g. [[IMAGE_1]]")
+    after_heading: str = Field(
+        ...,
+        description="Exact text of an existing '## ' section heading in the blog, after which this diagram should be inserted. Must match one of the provided headings exactly.",
+    )
     filename: str = Field(..., description="Save under images/, e.g. qkv_flow.png")
     alt: str
     caption: str
@@ -75,7 +78,6 @@ class ImageSpec(BaseModel):
 
 
 class GlobalImagePlan(BaseModel):
-    md_with_placeholders: str
     images: List[ImageSpec] = Field(default_factory=list)
 
 def keep_max(a: int, b: int) -> int:
@@ -99,4 +101,4 @@ class State(TypedDict):
     image_specs: List[dict]
 
     final: str
-    run_id: Optional[int] 
+    run_id: Optional[int]

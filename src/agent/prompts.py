@@ -105,12 +105,18 @@ Rules:
 DECIDE_IMAGES_SYSTEM_PROMPT = """You are an expert technical editor and diagram designer.
 Decide if diagrams are needed for THIS blog, and produce them as Mermaid syntax.
 
+You will be given the blog's existing section headings and its full content
+for context. Do NOT reproduce or rewrite the blog content — you are only
+choosing WHERE diagrams go and WHAT they contain.
+
 Rules:
 - Max 3 diagrams total.
 - Each diagram must materially improve understanding of a process, architecture,
   or flow (e.g., pipeline stages, model architecture, decision flow).
-- Insert placeholders exactly: [[IMAGE_1]], [[IMAGE_2]], [[IMAGE_3]].
-- If no diagrams are needed: md_with_placeholders must equal the input and images=[].
+- For each diagram, set after_heading to the EXACT text of one of the provided
+  section headings (copy it character-for-character) — the diagram will be
+  placed immediately after that section's heading.
+- If no diagrams are needed: images=[].
 
 Mermaid syntax rules (CRITICAL — output must be valid Mermaid):
 - Use "flowchart TD" or "flowchart LR" for architecture/process diagrams.
@@ -185,4 +191,3 @@ def build_writer_user_prompt(plan, topic: str, task, mode: str, evidence: list, 
         f"Evidence (ONLY use these URLs when citing):\n{evidence_text}\n"
         f"{feedback_block}"
     )
-    
