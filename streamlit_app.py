@@ -1,22 +1,16 @@
 """
 Streamlit frontend for the LangGraph Blog Writing Agent.
-
-Run with:
-    streamlit run streamlit_app.py
-
-Make sure the FastAPI backend is running first:
-    uvicorn app.backend:api --reload --port 8000
 """
 
 import json
+import os
 import requests
 import streamlit as st
 
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
-
-BACKEND_URL = "http://localhost:8000"
+BACKEND_URL = os.environ.get("BACKEND_URL", "http://localhost:8000")
 
 st.set_page_config(page_title="Blog Writing Agent", page_icon="📝", layout="wide")
 
@@ -24,14 +18,17 @@ st.set_page_config(page_title="Blog Writing Agent", page_icon="📝", layout="wi
 # Helpers
 # ---------------------------------------------------------------------------
 
-def rewrite_image_paths(markdown: str) -> str:
+def rewrite_image_paths(markdown: str, run_id: int | None) -> str:
     """
     Generated markdown contains relative image links like
     ](images/foo.png) which only work when a viewer opens the .md file
     directly from disk. In a browser (Streamlit), these need to be real
-    URLs pointing at the backend's static file mount instead.
+    URLs -- images are served from Postgres via /images/{run_id}/{filename},
+    so run_id must be known to build a working link.
     """
-    return markdown.replace("](images/", f"]({BACKEND_URL}/images/")
+    if not run_id:
+        return markdown
+    return markdown.replace("](images/", f"]({BACKEND_URL}/images/{run_id}/")
 
 
 def fetch_recent_runs(limit: int = 20):
@@ -108,7 +105,7 @@ def run_generation(topic: str):
             f"{BACKEND_URL}/generate",
             json={"topic": topic},
             stream=True,
-            timeout=600,  # generation can take a while
+            timeout=600,  
         ) as resp:
             resp.raise_for_status()
 
@@ -134,12 +131,11 @@ def run_generation(topic: str):
         return None
 
     if final_markdown:
-        final_markdown_placeholder.markdown(rewrite_image_paths(final_markdown))
+        final_markdown_placeholder.markdown(rewrite_image_paths(final_markdown, run_id))
     elif run_id:
-        # Backend didn't send markdown inline on "done" -- fetch it from /runs/{id}
         detail = fetch_run_detail(run_id)
         if detail and detail.get("final_markdown"):
-            final_markdown_placeholder.markdown(rewrite_image_paths(detail["final_markdown"]))
+            final_markdown_placeholder.markdown(rewrite_image_paths(detail["final_markdown"], run_id))
 
     return run_id
 
@@ -178,7 +174,6 @@ else:
 st.title("📝 Blog Writing Agent")
 st.caption("Multi-agent blog generation with research, critique, and revision — built with LangGraph.")
 
-# If a past run is selected, show it instead of the generator
 if st.session_state.view_run_id is not None:
     run_id = st.session_state.view_run_id
     st.subheader(f"Viewing past run #{run_id}")
@@ -187,13 +182,10 @@ if st.session_state.view_run_id is not None:
         st.markdown(f"**Topic:** {detail.get('topic', 'N/A')}")
         st.markdown(f"**Created:** {detail.get('created_at', 'N/A')}")
         st.divider()
-        st.markdown(rewrite_image_paths(detail.get("final_markdown", "*No content saved for this run.*")))
+        st.markdown(rewrite_image_paths(detail.get("final_markdown", "*No content saved for this run.*"), run_id))
 
 else:
     st.subheader("Generate a new blog")
-
-    # A form lets pressing Enter in the text field submit directly --
-    # a plain st.button() can't be triggered by the Enter key on its own.
     with st.form(key="generate_form"):
         topic = st.text_input("Topic", placeholder="e.g. Attention Mechanisms in Transformers")
         generate_clicked = st.form_submit_button("🚀 Generate", type="primary")

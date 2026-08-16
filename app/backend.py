@@ -8,32 +8,42 @@ Endpoints:
 """
 
 import json
-from pathlib import Path
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from src.agent.graph import app as agent_graph
-from src.agent.db import init_schema, fetch_recent_runs, fetch_run_detail
+from src.agent.db import init_schema, fetch_recent_runs, fetch_run_detail, fetch_image
 
 api = FastAPI(title="Blog Writing Agent API")
 
 api.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=["*"],  
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-Path("outputs/images").mkdir(parents=True, exist_ok=True)
-api.mount("/images", StaticFiles(directory="outputs/images"), name="images")
 
 
 @api.on_event("startup")
 def on_startup():
     init_schema()
+
+
+@api.get("/images/{run_id}/{filename}")
+def get_image(run_id: int, filename: str):
+    """
+    Serve a diagram image straight from Postgres rather than local disk.
+    Local disk is NOT reliable in deployment -- e.g. Render's filesystem
+    is ephemeral and gets wiped on every restart/redeploy, which would
+    silently break every past run's images. The database is the durable
+    source of truth here.
+    """
+    data = fetch_image(run_id, filename)
+    if data is None:
+        return Response(status_code=404)
+    return Response(content=data, media_type="image/png")
 
 
 class GenerateRequest(BaseModel):
@@ -86,6 +96,7 @@ def generate(req: GenerateRequest):
                     label = NODE_LABELS.get(node_name, node_name)
                     yield _sse_event("progress", {"node": node_name, "label": label})
 
+                    # When the final node completes, send the full result too
                     if node_name == "persist":
                         yield _sse_event("done", {
                             "run_id": node_output.get("run_id"),
