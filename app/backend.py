@@ -8,9 +8,11 @@ Endpoints:
 """
 
 import json
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from src.agent.graph import app as agent_graph
@@ -18,13 +20,15 @@ from src.agent.db import init_schema, fetch_recent_runs, fetch_run_detail
 
 api = FastAPI(title="Blog Writing Agent API")
 
-# Allow the React dev server (and later, your deployed frontend) to call this API
 api.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # tighten this to your actual frontend domain before deploying publicly
+    allow_origins=["*"], 
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+Path("outputs/images").mkdir(parents=True, exist_ok=True)
+api.mount("/images", StaticFiles(directory="outputs/images"), name="images")
 
 
 @api.on_event("startup")
@@ -77,14 +81,11 @@ def _sse_event(event_type: str, data: dict) -> str:
 def generate(req: GenerateRequest):
     def event_stream():
         try:
-            # .stream() yields a dict after each node completes, instead of
-            # only returning the final result like .invoke() does
             for step in agent_graph.stream(_initial_state(req.topic), config={"max_concurrency": 2}):
                 for node_name, node_output in step.items():
                     label = NODE_LABELS.get(node_name, node_name)
                     yield _sse_event("progress", {"node": node_name, "label": label})
 
-                    # When the final node completes, send the full result too
                     if node_name == "persist":
                         yield _sse_event("done", {
                             "run_id": node_output.get("run_id"),
