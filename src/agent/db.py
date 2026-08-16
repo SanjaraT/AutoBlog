@@ -80,8 +80,14 @@ CREATE TABLE IF NOT EXISTS images (
     filename TEXT,
     alt TEXT,
     caption TEXT,
-    mermaid_code TEXT
+    mermaid_code TEXT,
+    image_data BYTEA
 );
+
+-- Safe to run even on an already-existing table/deployment: adds the
+-- column only if it isn't there yet (e.g. upgrading a DB created before
+-- image bytes were stored in Postgres).
+ALTER TABLE images ADD COLUMN IF NOT EXISTS image_data BYTEA;
 
 CREATE INDEX IF NOT EXISTS idx_sections_run_id ON sections(run_id);
 CREATE INDEX IF NOT EXISTS idx_evidence_run_id ON evidence(run_id);
@@ -114,6 +120,20 @@ def fetch_recent_runs(limit: int = 20) -> list[dict]:
             return cur.fetchall()
 
 
+def fetch_image(run_id: int, filename: str) -> bytes | None:
+    """Return the raw PNG bytes for one image belonging to a run, or None if not found."""
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT image_data FROM images WHERE run_id = %s AND filename = %s",
+                (run_id, filename),
+            )
+            row = cur.fetchone()
+            if not row or row[0] is None:
+                return None
+            return bytes(row[0])
+
+
 def fetch_run_detail(run_id: int) -> dict | None:
     """Return full detail for one run: metadata + final markdown + sections + critiques."""
     with get_connection() as conn:
@@ -132,7 +152,10 @@ def fetch_run_detail(run_id: int) -> dict | None:
             cur.execute("SELECT * FROM evidence WHERE run_id = %s", (run_id,))
             run["evidence"] = cur.fetchall()
 
-            cur.execute("SELECT * FROM images WHERE run_id = %s", (run_id,))
+            cur.execute(
+                "SELECT id, run_id, filename, alt, caption, mermaid_code FROM images WHERE run_id = %s",
+                (run_id,),
+            )
             run["images"] = cur.fetchall()
 
             return run

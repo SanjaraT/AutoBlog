@@ -5,6 +5,7 @@ main graph, after the reducer has assembled the final blog.
 
 from src.agent.state import State
 from src.agent.db import get_connection
+import psycopg2
 
 
 def persist_run(state: State) -> dict:
@@ -37,8 +38,6 @@ def persist_run(state: State) -> dict:
             )
             run_id = cur.fetchone()[0]
 
-            # Sections: dedupe by task_id first (same fix as merge_content —
-            # revised sections can appear more than once in state["sections"])
             latest_sections: dict[int, str] = {}
             for task_id, md in state.get("sections", []):
                 latest_sections[task_id] = md
@@ -76,13 +75,21 @@ def persist_run(state: State) -> dict:
 
             # Images
             for spec in state.get("image_specs", []):
+                image_bytes = spec.get("image_bytes")
                 cur.execute(
                     """
-                    INSERT INTO images (run_id, filename, alt, caption, mermaid_code)
-                    VALUES (%s, %s, %s, %s, %s)
+                    INSERT INTO images (run_id, filename, alt, caption, mermaid_code, image_data)
+                    VALUES (%s, %s, %s, %s, %s, %s)
                     """,
-                    (run_id, spec.get("filename"), spec.get("alt"), spec.get("caption"), spec.get("mermaid_code")),
+                    (
+                        run_id,
+                        spec.get("filename"),
+                        spec.get("alt"),
+                        spec.get("caption"),
+                        spec.get("mermaid_code"),
+                        psycopg2.Binary(image_bytes) if image_bytes else None,
+                    ),
                 )
-
+ 
     print(f"\n[persistence] Saved run #{run_id} to database.")
     return {"run_id": run_id}

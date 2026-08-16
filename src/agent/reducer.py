@@ -47,21 +47,19 @@ def _insert_placeholders(md: str, images: list[dict]) -> str:
     for idx, spec in enumerate(images, start=1):
         placeholder = f"[[IMAGE_{idx}]]"
         spec["placeholder"] = placeholder
-
+ 
         heading_line = f"## {spec['after_heading']}"
         if heading_line in md:
             md = md.replace(heading_line, f"{heading_line}\n\n{placeholder}", 1)
         else:
-            # LLM didn't return an exact heading match -- fall back to
-            # appending at the end rather than silently dropping the diagram
             md = md.rstrip() + f"\n\n{placeholder}\n"
-
+ 
     return md
-
-
+ 
+ 
 def decide_images(state: State) -> dict:
     """Step 2: ask the LLM WHERE diagrams help and WHAT they should contain.
-
+ 
     The LLM only returns structured ImageSpec objects (heading + mermaid code
     + captions) -- it is never asked to reproduce the blog text itself.
     Placeholder insertion happens afterward in plain Python via
@@ -71,10 +69,10 @@ def decide_images(state: State) -> dict:
     merged_md = state["merged_md"]
     plan = state["plan"]
     assert plan is not None
-
+ 
     headings = _extract_headings(merged_md)
     headings_text = "\n".join(f"- {h}" for h in headings)
-
+ 
     image_plan = planner.invoke(
         [
             SystemMessage(content=DECIDE_IMAGES_SYSTEM_PROMPT),
@@ -90,60 +88,58 @@ def decide_images(state: State) -> dict:
             ),
         ]
     )
-
+ 
     images = [img.model_dump() for img in image_plan.images]
     md_with_placeholders = _insert_placeholders(merged_md, images)
-
+ 
     return {
         "md_with_placeholders": md_with_placeholders,
         "image_specs": images,
     }
-
-
+ 
+ 
 def generate_and_place_images(state: State) -> dict:
     """Step 3: render each planned Mermaid diagram to PNG and splice it into the markdown."""
     plan = state["plan"]
     assert plan is not None
-
+ 
     md = state.get("md_with_placeholders") or state["merged_md"]
     image_specs = state.get("image_specs", []) or []
-
+ 
     safe_title = "".join(c if c.isalnum() or c in (" ", "_", "-") else "" for c in plan.blog_title)
     filename = safe_title.strip().lower().replace(" ", "_") + ".md"
-
+ 
     if not image_specs:
         (OUTPUT_DIR / filename).write_text(md, encoding="utf-8")
         return {"final": md}
-
+ 
     IMAGES_DIR.mkdir(exist_ok=True)
-
+ 
     for spec in image_specs:
         placeholder = spec["placeholder"]
         img_filename = spec["filename"]
         out_path = IMAGES_DIR / img_filename
-
-        if not out_path.exists():
-            try:
-                img_bytes = render_mermaid_to_png(spec["mermaid_code"])
+ 
+        try:
+            img_bytes = render_mermaid_to_png(spec["mermaid_code"])
+            spec["image_bytes"] = img_bytes
+            if not out_path.exists():
                 out_path.write_bytes(img_bytes)
-            except Exception as e:
-                # Graceful fallback: if Mermaid syntax was invalid or the render
-                # service failed, show the diagram source as a code block instead
-                # of silently dropping the placeholder
-                fallback_block = (
-                    f"> **[DIAGRAM RENDER FAILED]** {spec.get('caption', '')}\n>\n"
-                    f"```mermaid\n{spec.get('mermaid_code', '')}\n```\n"
-                    f"> **Error:** {e}\n"
-                )
-                md = md.replace(placeholder, fallback_block)
-                continue
-
+        except Exception as e:
+            spec["image_bytes"] = None
+            fallback_block = (
+                f"> **[DIAGRAM RENDER FAILED]** {spec.get('caption', '')}\n>\n"
+                f"```mermaid\n{spec.get('mermaid_code', '')}\n```\n"
+                f"> **Error:** {e}\n"
+            )
+            md = md.replace(placeholder, fallback_block)
+            continue
+ 
         img_md = f"![{spec['alt']}](images/{img_filename})\n*{spec['caption']}*"
         md = md.replace(placeholder, img_md)
-
+ 
     (OUTPUT_DIR / filename).write_text(md, encoding="utf-8")
-    return {"final": md}
-
+    return {"final": md, "image_specs": image_specs}
 
 
 def build_reducer_subgraph():
