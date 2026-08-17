@@ -3,23 +3,27 @@ import base64
 from typing import List
 
 import requests
-from langchain_community.tools.tavily_search import TavilySearchResults
+from langchain_tavily import TavilySearch
 
 
+ 
 # =============================================================================
 # Web search (Tavily)
 # =============================================================================
-
+ 
 def tavily_search(query: str, max_results: int = 5, snippet_char_limit: int = 400) -> List[dict]:
     """
     Run a single Tavily search and normalize results.
     Snippets are truncated to keep downstream LLM calls within token limits.
     """
-    tool = TavilySearchResults(max_results=max_results)
-    results = tool.invoke({"query": query})
-
+    tool = TavilySearch(max_results=max_results)
+    response = tool.invoke({"query": query})
+    # TavilySearch.invoke() returns a dict like {"results": [...], ...} --
+    # unlike the deprecated TavilySearchResults, which returned a bare list.
+    results = response.get("results", []) if isinstance(response, dict) else (response or [])
+ 
     normalized: List[dict] = []
-    for r in results or []:
+    for r in results:
         snippet = r.get("content") or r.get("snippet") or ""
         normalized.append(
             {
