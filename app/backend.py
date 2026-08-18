@@ -20,7 +20,7 @@ api = FastAPI(title="Blog Writing Agent API")
 
 api.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  
+    allow_origins=["https://autoblog-v4o5.onrender.com"],  
     allow_methods=["*"],
     allow_headers=["*"],
 )
