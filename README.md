@@ -4,8 +4,8 @@ A multi-agent blog-writing system built with **LangGraph**, extended well past i
 original tutorial scope into a full research → write → critique → revise →
 persist → serve pipeline, with a live deployed frontend.
  
-**Live app:** `<https://autoblog-v4o5.onrender.com/>`
-**Backend API:** `<https://autoblog-backend-kn8l.onrender.com/>`
+**Live app:** `https://autoblog-v4o5.onrender.com`
+**Backend API:** `https://autoblog-backend-kn8l.onrender.com/`
 
 ---
 
