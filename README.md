@@ -137,6 +137,6 @@ Requires a `.env` with `DATABASE_URL`, `GROQ_API_KEY`, `TAVILY_API_KEY`, and
 - Automated tests covering the critic/revision loop, image placement, and
   citation verification
 - Rate limiting on the public `/generate` endpoint
-- Cost/token usage tracking per run
+- Cost/token usage tracking per run 
 - LinkedIn-ready draft generation as an optional output format
-- Response caching layer for repeated/similar topics](https://autoblog-backend-kn8l.onrender.com/)
+- Response caching layer for repeated/similar topics
