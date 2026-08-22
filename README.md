@@ -1,4 +1,4 @@
-[# AutoBlog
+# AutoBlog
 
 A multi-agent blog-writing system built with **LangGraph**, extended well past its
 original tutorial scope into a full research → write → critique → revise →
