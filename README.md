@@ -1,5 +1,7 @@
 # AutoBlog
 
+https://github.com/user-attachments/assets/6c05e0f1-0845-48b9-a56c-142ea003d5b6
+
 A multi-agent blog-writing system built with **LangGraph**, extended well past its
 original tutorial scope into a full research → write → critique → revise →
 persist → serve pipeline, with a live deployed frontend.
