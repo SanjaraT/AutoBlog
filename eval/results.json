@@ -1,0 +1,482 @@
+[
+  {
+    "topic": "Backpropagation Explained for Deep Learning Engineers",
+    "run_id": 42,
+    "total_sections": 7,
+    "passed_sections": 6,
+    "critic_pass_rate": 0.8571428571428571,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 5,
+      "structure": 5,
+      "accuracy_confidence": 3,
+      "overall": 4,
+      "rationale": "The post explains backpropagation intuitively, derives the chain\u2011rule formulas, provides a full code sketch, discusses edge cases, performance, debugging, and autograd usage, showing strong depth and logical flow. Clarity is good, though the missing diagram and a few dense equations require careful reading. Accuracy suffers because the Python example contains bugs (e.g., undefined `relu_z1` inside `backward` and missing `z1`/`relu_z1` arguments), which could mislead readers attempting to run it. Overall, a developer would find the content valuable despite these issues."
+    }
+  },
+  {
+    "topic": "The Encoder-Decoder Architecture of Transformer",
+    "run_id": 45,
+    "total_sections": 6,
+    "passed_sections": 6,
+    "critic_pass_rate": 1.0,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 5,
+      "structure": 5,
+      "accuracy_confidence": 4,
+      "overall": 5,
+      "rationale": "The post accurately describes the encoder\u2011decoder Transformer architecture, its components, and common pitfalls; the only minor issues are a missing diagram (the mermaid block fails to render) and a few oversimplified cost formulas. The explanations are clear and well\u2011organized, moving from high\u2011level concepts to detailed layer internals, a runnable PyTorch example, performance considerations, edge\u2011case handling, and debugging tips. The depth is strong, offering concrete code, math, and practical advice that a developer would find genuinely useful."
+    }
+  },
+  {
+    "topic": "Understanding Word Embeddings and Word2Vec",
+    "run_id": 47,
+    "total_sections": 7,
+    "passed_sections": 6,
+    "critic_pass_rate": 0.8571428571428571,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 5,
+      "structure": 4,
+      "accuracy_confidence": 5,
+      "overall": 5,
+      "rationale": "The post presents accurate descriptions of word embeddings, Word2Vec architectures, and Gensim usage, with no evident factual errors. It offers concrete code snippets, evaluation techniques, and deployment guidance, providing substantial depth for a developer. While the organization follows a logical progression, a few sections repeat similar advice (e.g., caching and monitoring) which slightly hampers structural elegance."
+    }
+  },
+  {
+    "topic": "Recurrent Neural Networks and the Vanishing Gradient Problem",
+    "run_id": 48,
+    "total_sections": 6,
+    "passed_sections": 5,
+    "critic_pass_rate": 0.8333333333333334,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 4,
+      "structure": 3,
+      "accuracy_confidence": 3,
+      "overall": 4,
+      "rationale": "The post accurately explains the basic RNN equations and the Jacobian\u2011based reasoning behind vanishing gradients, and it provides a concrete PyTorch example and practical mitigation tricks, which makes it substantively useful. However, the gradient derivation contains a minor indexing typo, the code for step\u2011wise gradient collection is flawed (it re\u2011uses the full loss graph and zeroes grads in a non\u2011standard way), and the claim that ReLU \"instantly kills\" gradients is overstated. Missing diagrams (render failures) interrupt the flow, and a few statements (e.g., about dropout scaling) lack supporting citations, reducing structural polish. These issues lower confidence in factual precision and organization while overall clarity and depth remain strong."
+    }
+  },
+  {
+    "topic": "The Bias-Variance Tradeoff in Machine Learning",
+    "run_id": 50,
+    "total_sections": 6,
+    "passed_sections": 5,
+    "critic_pass_rate": 0.8333333333333334,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 4,
+      "structure": 5,
+      "accuracy_confidence": 5,
+      "overall": 4,
+      "rationale": "The post presents standard bias\u2011variance theory with correct formulas and a concrete Python example, showing no unsupported claims. Explanations are generally clear, though the mathematical derivation and some dense paragraphs may require careful reading. It covers conceptual, mathematical, practical coding, debugging, and edge\u2011case considerations, offering substantive depth without being superficial."
+    }
+  },
+  {
+    "topic": "Vector Databases for Semantic Search",
+    "run_id": 52,
+    "total_sections": 7,
+    "passed_sections": 6,
+    "critic_pass_rate": 0.8571428571428571,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 4,
+      "structure": 4,
+      "accuracy_confidence": 4,
+      "overall": 4,
+      "rationale": "The post is generally accurate and well\u2011sourced, but a few quantitative claims (e.g., per\u2011million\u2011operation cost conversions) are derived without explicit backing and could mislead. Clarity is strong thanks to headings and code snippets, yet occasional dense jargon and long sentences make parts harder to follow. It covers selection, benchmarking, hybrid search, observability, and security in depth, though some sections repeat cost/compliance points and the hybrid\u2011search example could be more contextualised."
+    }
+  },
+  {
+    "topic": "Prompt Engineering Best Practices for Production LLM Apps",
+    "run_id": 53,
+    "total_sections": 8,
+    "passed_sections": 7,
+    "critic_pass_rate": 0.875,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 5,
+      "structure": 4,
+      "accuracy_confidence": 4,
+      "overall": 4,
+      "rationale": "The post is well\u2011sourced and most claims are backed by concrete references, though a few citations are repeated and the missing diagram reduces verifiability. Explanations are generally clear, with concise code snippets and concrete CI/CD examples, but occasional dense jargon and a failed mermaid rendering hurt readability. It covers a broad set of production concerns (prompt design, version control, testing, observability, guardrails, cost, security) with specific tools and patterns, offering substantial depth for developers. The organization follows a logical progression from design principles to implementation details, with only minor redundancy across sections."
+    }
+  },
+  {
+    "topic": "Building Multi-Agent Systems with LangGraph",
+    "run_id": 54,
+    "total_sections": 8,
+    "passed_sections": 8,
+    "critic_pass_rate": 1.0,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 4,
+      "structure": 4,
+      "accuracy_confidence": 3,
+      "overall": 4,
+      "rationale": "The post is well\u2011organized and explains LangGraph concepts with concrete code, making it largely clear and useful. However, several performance and cost claims (e.g., the Aerospike benchmark, 2\u00d7 speed advantage) are presented without verifiable citations, and some statements are marked as not found in sources, reducing confidence in factual accuracy. Minor inconsistencies such as mismatched function names (AgentA vs agent_a) also detract from polish."
+    }
+  },
+  {
+    "topic": "Quantization Techniques for Deploying LLMs Efficiently",
+    "run_id": 56,
+    "total_sections": 6,
+    "passed_sections": 5,
+    "critic_pass_rate": 0.8333333333333334,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 3,
+      "depth": 4,
+      "structure": 3,
+      "accuracy_confidence": 3,
+      "overall": 3,
+      "rationale": "The post covers a wide range of quantization methods, includes practical code and performance numbers, and cites many sources, giving it solid depth. However, several claims lack concrete backing (e.g., cost calculations without source data) and some references point to generic pages. Clarity suffers from broken diagram placeholders, a truncated code snippet, and occasional formatting glitches that interrupt reading. Structurally the sections follow a logical order, but the repeated \"DIAGRAM RENDER FAILED\" blocks and occasional redundancy (e.g., re\u2011stating calibration needs) disrupt flow. Overall a developer would find useful snippets and guidance, but the presentation issues and occasional unsupported assertions lower its overall utility."
+    }
+  },
+  {
+    "topic": "Model Context Protocol (MCP) for AI Agents",
+    "run_id": 58,
+    "total_sections": 9,
+    "passed_sections": 8,
+    "critic_pass_rate": 0.8888888888888888,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 5,
+      "structure": 4,
+      "accuracy_confidence": 2,
+      "overall": 4,
+      "rationale": "The post is well\u2011organized and explains MCP concepts, architecture, code samples, and operational concerns in a clear, developer\u2011friendly way, showing good depth. However, many cited sources have implausible future dates (e.g., 2026\u201107\u201128, arXiv IDs like 2505.xxx) and URLs that do not exist, suggesting the references are fabricated, which hurts confidence in factual accuracy. The narrative repeats security advice in multiple sections and includes a broken diagram, indicating minor structural redundancy."
+    }
+  },
+  {
+    "topic": "This Week's Major AI Model Releases",
+    "run_id": 59,
+    "total_sections": 7,
+    "passed_sections": 7,
+    "critic_pass_rate": 1.0,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 4,
+      "structure": 4,
+      "accuracy_confidence": 2,
+      "overall": 3,
+      "rationale": "The post is well\u2011organized with clear headings, a budgeting worksheet, and concrete numbers (token windows, pricing, latency), which makes it substantively useful for developers. However, several cited sources appear generic or potentially fabricated, the mermaid diagram fails to render, and some URLs are broken, raising doubts about factual accuracy. The writing is clear overall, but the missing visual and questionable references detract from confidence in the claims."
+    }
+  },
+  {
+    "topic": "Building AI Agents with Tool Use and Function Calling",
+    "run_id": 61,
+    "total_sections": 7,
+    "passed_sections": 6,
+    "critic_pass_rate": 0.8571428571428571,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 4,
+      "structure": 4,
+      "accuracy_confidence": 3,
+      "overall": 4,
+      "rationale": "The post covers a wide range of practical topics\u2014model selection, open\u2011source frameworks, a runnable code example, observability, and cost considerations\u2014giving developers concrete guidance. However, several cited sources (e.g., 2026\u201104\u201107 research, arXiv link) appear fabricated or unverifiable, which lowers confidence in factual accuracy. The organization is logical with clear headings, though missing diagram renderings and occasional repetition prevent a perfect structure score."
+    }
+  },
+  {
+    "topic": "Latest Developments in Open-Source LLMs This Month",
+    "run_id": 62,
+    "total_sections": 5,
+    "passed_sections": 4,
+    "critic_pass_rate": 0.8,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 3,
+      "depth": 4,
+      "structure": 3,
+      "accuracy_confidence": 2,
+      "overall": 3,
+      "rationale": "The post offers concrete model specs, benchmark numbers, licensing details, and deployment cost analysis, showing good depth. However many of the cited URLs appear fabricated or generic, and key failure\u2011mode claims are marked as \u201cNot found in provided sources,\u201d undermining confidence in factual accuracy. Markdown is occasionally broken (e.g., an unfinished image link and a stray bracket in the Qwen paragraph), and the Qwen description cuts off mid\u2011sentence, hurting flow. While the organization into sections is logical, these formatting issues and missing verifiable references reduce overall reliability and readability."
+    }
+  },
+  {
+    "topic": "Recent AI Regulation News and Policy Changes",
+    "run_id": 63,
+    "total_sections": 7,
+    "passed_sections": 6,
+    "critic_pass_rate": 0.8571428571428571,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 5,
+      "structure": 5,
+      "accuracy_confidence": 4,
+      "overall": 5,
+      "rationale": "The post is well\u2011organized with clear headings, concise checklists, and useful tables that a developer can act on. It provides concrete compliance steps and cost estimates across multiple jurisdictions, showing strong depth. Accuracy is generally solid, though many U.S. claims rely on a single source and some statements could benefit from broader citation, preventing a perfect score."
+    }
+  },
+  {
+    "topic": "Latest Pricing Changes Among Major LLM API Providers",
+    "run_id": 64,
+    "total_sections": 7,
+    "passed_sections": 6,
+    "critic_pass_rate": 0.8571428571428571,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 5,
+      "structure": 5,
+      "accuracy_confidence": 4,
+      "overall": 4,
+      "rationale": "The post cites official pricing pages and includes concrete token\u2011rate tables, giving it solid factual grounding (accuracy 4). The writing is well\u2011organized with clear headings, bullet lists, and a readable code example, making the material easy to follow (clarity 4). It goes beyond surface\u2011level reporting by breaking down each provider\u2019s new fees, showing a calculator, discussing hidden costs, strategic budgeting, and observability practices, which provides strong depth (depth 5). The logical progression from snapshot to provider specifics, then to tooling and mitigation strategies is smooth and non\u2011redundant (structure 5). However, a few details\u2014such as the simplified per\u2011token rates in the code that omit surcharges, and a brief, somewhat vague description of Gemini\u2019s \u201cfree to paid\u201d transition\u2014prevent it from being perfectly reliable for budgeting, keeping the overall usefulness at a high but not perfect level (overall 4)."
+    }
+  },
+  {
+    "topic": "Latest News on AI Chip Manufacturing and Nvidia Competitors",
+    "run_id": 66,
+    "total_sections": 6,
+    "passed_sections": 5,
+    "critic_pass_rate": 0.8333333333333334,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 4,
+      "structure": 3,
+      "accuracy_confidence": 4,
+      "overall": 4,
+      "rationale": "The post offers concrete specs, performance and cost analysis, and manufacturing context, making it substantively useful, but it leans heavily on press releases and marketing\u2011type sources, so some claims (e.g., 2.5\u00d7 performance\u2011per\u2011watt) are not independently verified. Clarity is strong overall, though the broken diagram placeholder disrupts the reading flow. Depth is solid with technical details across Nvidia, AMD, and Intel, yet the structure suffers from a minor redundancy and the missing visual, preventing a perfect score."
+    }
+  },
+  {
+    "topic": "Recent Controversies in AI Safety and Alignment",
+    "run_id": 68,
+    "total_sections": 7,
+    "passed_sections": 7,
+    "critic_pass_rate": 1.0,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 3,
+      "structure": 4,
+      "accuracy_confidence": 3,
+      "overall": 3,
+      "rationale": "The post is well\u2011organized and generally clear, but several statements are marked as unsupported (\u201cNot found in provided sources\u201d), weakening confidence in factual accuracy. It touches on many current controversies, yet many sections stay at a high\u2011level overview without deep technical analysis or concrete examples, limiting substantive depth. The logical flow across headings is solid, making it readable, but the mix of well\u2011sourced and unsourced claims reduces its overall usefulness to a developer reader."
+    }
+  },
+  {
+    "topic": "This Month's Notable AI Startup Funding Rounds",
+    "run_id": 69,
+    "total_sections": 7,
+    "passed_sections": 7,
+    "critic_pass_rate": 1.0,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 4,
+      "structure": 4,
+      "accuracy_confidence": 3,
+      "overall": 4,
+      "rationale": "The post is generally well\u2011written and organized, with clear headings and data\u2011driven narratives that a developer can follow. It provides specific funding amounts, valuations, and sector insights, which adds substantive depth. However, several assertions (e.g., cost per defense system, impact of strategic investors, and valuation\u2011drop effects) are flagged as not found in the cited sources, weakening confidence in factual accuracy. A few sections repeat similar points about mega\u2011rounds and defense funding, creating mild redundancy, but the overall flow remains logical."
+    }
+  },
+  {
+    "topic": "This Week's Developments in Multimodal AI Models",
+    "run_id": 71,
+    "total_sections": 7,
+    "passed_sections": 7,
+    "critic_pass_rate": 1.0,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 4,
+      "structure": 4,
+      "accuracy_confidence": 3,
+      "overall": 4,
+      "rationale": "The post is generally clear and well\u2011organized, covering several recent multimodal releases with concrete metrics and developer implications. However, a number of statements are flagged as lacking source verification, and some cost/performance numbers are presented without citations, reducing confidence in their accuracy. The content is substantive and offers actionable insights, though occasional generic phrasing and unsupported claims prevent a higher rating."
+    }
+  },
+  {
+    "topic": "Attention Mechanism in Transformers",
+    "run_id": 72,
+    "total_sections": 7,
+    "passed_sections": 6,
+    "critic_pass_rate": 0.8571428571428571,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 5,
+      "structure": 5,
+      "accuracy_confidence": 5,
+      "overall": 5,
+      "rationale": "The post accurately describes the attention mechanism, scaled dot\u2011product formula, multi\u2011head architecture, and practical concerns; all statements are consistent with the literature. The exposition is clear and well\u2011organized, moving from intuition to math to code and finally to performance and debugging tips. It provides substantive detail (formulas, PyTorch sketch, memory estimates, edge\u2011case handling) that would be genuinely useful to a developer. The only minor weaknesses are a small code typo (missing parenthesis) and occasional dense phrasing that could be simplified, which keeps the clarity score just below perfect."
+    }
+  },
+  {
+    "topic": "Convolutional Neural Networks for Image Classification",
+    "run_id": 73,
+    "total_sections": 7,
+    "passed_sections": 6,
+    "critic_pass_rate": 0.8571428571428571,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 3,
+      "structure": 4,
+      "accuracy_confidence": 4,
+      "overall": 4,
+      "rationale": "The post presents correct technical details about CNN fundamentals, PyTorch implementation, and deployment optimizations, showing solid factual grounding. While explanations are clear and well\u2011organized, the depth is limited by generic code snippets and surface\u2011level discussion of advanced topics like pruning or quantization without concrete examples or performance numbers. Overall a developer would find it useful as a starter guide, though more nuanced analysis and empirical evidence would raise its value."
+    }
+  },
+  {
+    "topic": "Serving LLMs at Scale: vLLM and Inference Optimization",
+    "run_id": 78,
+    "total_sections": 7,
+    "passed_sections": 6,
+    "critic_pass_rate": 0.8571428571428571,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 4,
+      "structure": 4,
+      "accuracy_confidence": 3,
+      "overall": 4,
+      "rationale": "The post is well\u2011organized and explains vLLM concepts, setup, and production concerns with concrete code and configuration examples, making it useful for developers. However, several quantitative claims (e.g., 2\u201324\u00d7 throughput gains, exact cost reductions) rely on loosely cited or non\u2011standard sources, and some numbers appear optimistic without clear benchmark details, lowering confidence in accuracy. Additionally, a few points (e.g., repeated mentions of KV\u2011cache paging) are redundant, but the overall flow remains logical."
+    }
+  },
+  {
+    "topic": "Fine-Tuning Large Language Models with LoRA",
+    "run_id": 79,
+    "total_sections": 7,
+    "passed_sections": 7,
+    "critic_pass_rate": 1.0,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 4,
+      "structure": 4,
+      "accuracy_confidence": 4,
+      "overall": 4,
+      "rationale": "The post presents accurate descriptions of LoRA and includes concrete code, hyper\u2011parameter guidance, and debugging tips, but a few claims (e.g., the 170\u202f% speedup) rely on single informal sources and the missing diagram reduces immediate comprehension. The writing is clear and well\u2011organized, though some sections repeat points about learning\u2011rate schedules. Overall a developer would find the guide substantively useful despite minor gaps."
+    }
+  },
+  {
+    "topic": "Gradient Descent Variants: SGD, Momentum, Adam",
+    "run_id": 81,
+    "total_sections": 6,
+    "passed_sections": 5,
+    "critic_pass_rate": 0.8333333333333334,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 3,
+      "depth": 4,
+      "structure": 4,
+      "accuracy_confidence": 4,
+      "overall": 4,
+      "rationale": "The post correctly explains SGD, momentum, and Adam with accurate equations and practical tips, but it contains a few factual slips (e.g., claiming Adam adds only ~50% memory over Momentum) and an incomplete SGD code snippet. Broken diagram placeholders interrupt the reading flow, reducing clarity. Nonetheless, the coverage is substantive, well\u2011organized, and offers concrete guidance that a developer would find genuinely useful."
+    }
+  },
+  {
+    "topic": "Overfitting and Regularization Techniques in Machine Learning",
+    "run_id": 82,
+    "total_sections": 8,
+    "passed_sections": 8,
+    "critic_pass_rate": 1.0,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 4,
+      "structure": 3,
+      "accuracy_confidence": 4,
+      "overall": 4,
+      "rationale": "The post is factually accurate on most points (e.g., bias\u2011variance trade\u2011off, L1/L2 behavior, AdamW nuance) and avoids obvious misconceptions, earning a 4 for accuracy. Language is clear and explanations are well\u2011phrased, though occasional dense sentences and missing diagram images slightly hinder readability, giving a clarity score of 4. It covers a broad set of topics\u2014from basic diagnostics to advanced regularization and cost considerations\u2014with concrete code, which demonstrates substantive depth, but some sections (early stopping, data augmentation) are treated at a high level without deeper practical guidance, so depth is rated 4. A developer would find the guide genuinely useful, though not exhaustive, justifying an overall score of 4. The logical flow is mostly good (intro, diagnosis, primitives, hands\u2011on, advanced, edge cases, performance, debugging), but repetition of early\u2011stopping discussion and placeholder diagram failures introduce minor redundancy and disrupt continuity, leading to a structure rating of 3."
+    }
+  },
+  {
+    "topic": "Retrieval-Augmented Generation (RAG) Systems",
+    "run_id": 84,
+    "total_sections": 7,
+    "passed_sections": 6,
+    "critic_pass_rate": 0.8571428571428571,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 4,
+      "structure": 4,
+      "accuracy_confidence": 4,
+      "overall": 4,
+      "rationale": "The post covers RAG concepts, pipeline details, framework comparison, code example, and production concerns with concrete metrics, making it substantively useful. Some citations are placeholders (e.g., \u3010Source\u3011) and a few statements are broad without specific data, which slightly lowers confidence and precision. Overall the organization is logical and the explanations are clear enough for a developer to follow and apply."
+    }
+  },
+  {
+    "topic": "Recent Breakthroughs in AI Agent Benchmarks",
+    "run_id": 86,
+    "total_sections": 6,
+    "passed_sections": 6,
+    "critic_pass_rate": 1.0,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 3,
+      "structure": 5,
+      "accuracy_confidence": 2,
+      "overall": 3,
+      "rationale": "The post is well\u2011organized and reads clearly, with logical headings and concise explanations, but many of its cited sources appear fabricated or overly generic, undermining confidence in the factual claims. While it offers concrete numbers and metric definitions, the discussion often stays at a surface level and repeats familiar benchmark narratives without deep technical insight, limiting its substantive value for developers."
+    }
+  },
+  {
+    "topic": "Batch Normalization and Why It Works",
+    "run_id": 88,
+    "total_sections": 6,
+    "passed_sections": 5,
+    "critic_pass_rate": 0.8333333333333334,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 5,
+      "structure": 4,
+      "accuracy_confidence": 4,
+      "overall": 4,
+      "rationale": "The post presents correct formulas, explains forward/backward passes, and covers practical concerns like small batch sizes and interaction with dropout, showing solid technical accuracy. Clarity is good overall, though the missing diagrams force the reader to infer visual information and a few sentences are dense. Depth is strong, offering mathematical detail, edge\u2011case analysis, performance impact, and debugging tips that go beyond a superficial overview. Structure follows a logical progression (intuition \u2192 math \u2192 pitfalls \u2192 performance \u2192 debugging), but the broken diagram placeholders slightly disrupt flow."
+    }
+  },
+  {
+    "topic": "Evaluating LLM Outputs: Metrics and Frameworks",
+    "run_id": 89,
+    "total_sections": 7,
+    "passed_sections": 6,
+    "critic_pass_rate": 0.8571428571428571,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 5,
+      "depth": 5,
+      "structure": 5,
+      "accuracy_confidence": 4,
+      "overall": 4,
+      "rationale": "The post is well\u2011organized and explains metrics, frameworks, and production practices with concrete code snippets and clear headings, making it easy to follow. While most claims are backed by cited sources, a few specifics (e.g., exact threshold values, the DeepEval integration) lack verifiable references, which slightly weakens confidence in accuracy. Nonetheless, the depth of coverage and practical guidance would be genuinely useful to a developer building LLM pipelines."
+    }
+  },
+  {
+    "topic": "Latest Updates to Popular AI Coding Assistants",
+    "run_id": 70,
+    "total_sections": 7,
+    "passed_sections": 6,
+    "critic_pass_rate": 0.8571428571428571,
+    "unverified_citation_count": 0,
+    "judgment": {
+      "clarity": 4,
+      "depth": 3,
+      "structure": 4,
+      "accuracy_confidence": 2,
+      "overall": 3,
+      "rationale": "The post is well\u2011organized and generally clear, with logical sections and concise bullet points, but several claims are either speculative (e.g., \"upcoming GPT\u20115\") or dated after the April\u202f2024 edition (e.g., updates in Dec\u202f2024, Oct\u202f2024), undermining confidence in its factual accuracy. While it provides concrete details for most assistants, some sections remain surface\u2011level and repeat information, limiting depth. Consequently, a developer would find it moderately useful but would need to verify the timeline and some assertions."
+    }
+  }
+]
