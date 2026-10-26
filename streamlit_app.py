@@ -144,29 +144,42 @@ def run_generation(topic: str):
 # Sidebar: past runs
 # ---------------------------------------------------------------------------
 
-st.sidebar.title("📚 Past Runs")
-
 if "view_run_id" not in st.session_state:
     st.session_state.view_run_id = None  # None = generator view, else viewing that past run
+ 
+if "runs_limit" not in st.session_state:
+    st.session_state.runs_limit = 20
 
+st.sidebar.title("📚 Past Runs")
+ 
 if st.sidebar.button("＋ New Blog", type="primary", use_container_width=True):
     st.session_state.view_run_id = None
     st.rerun()
-
+ 
 if st.sidebar.button("🔄 Refresh list"):
     st.rerun()
-
-runs = fetch_recent_runs()
-
+ 
+topic_filter = st.sidebar.text_input("Filter by topic", placeholder="e.g. attention, RAG...")
+ 
+runs = fetch_recent_runs(limit=st.session_state.runs_limit)
+ 
+if topic_filter.strip():
+    runs = [r for r in runs if topic_filter.strip().lower() in (r.get("topic") or "").lower()]
+ 
 if runs:
     for run in runs:
         label = f"#{run.get('id')} — {run.get('topic', 'untitled')}"
         if st.sidebar.button(label, key=f"run_{run.get('id')}", use_container_width=True):
             st.session_state.view_run_id = run.get("id")
             st.rerun()
+ 
+    if len(runs) >= st.session_state.runs_limit and not topic_filter.strip():
+        if st.sidebar.button("Load 20 more"):
+            st.session_state.runs_limit += 20
+            st.rerun()
 else:
-    st.sidebar.caption("No past runs yet — generate your first blog!")
-
+    st.sidebar.caption("No past runs yet — generate your first blog!" if not topic_filter.strip() else "No runs match that filter.")
+ 
 # ---------------------------------------------------------------------------
 # Main area
 # ---------------------------------------------------------------------------
